@@ -1,35 +1,38 @@
 import Head from "next/head";
 import { useState } from "react";
 import styles from "./index.module.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import QForm from "./components/QForm";
+import LoadingSpinner from "./components/LoadingSpinner";
+import WrapperCard from "./components/WrapperCard";
+import Header from "./components/Header";
+
 
 export default function Home() {
-  const [animalInput, setAnimalInput] = useState("");
   const [result, setResult] = useState();
+  const [isSpinnerDisplayed, setIsSpinnerDisplayed] = useState(false);
 
-  async function onSubmit(event) {
-    event.preventDefault();
-    try {
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ animal: animalInput }),
-      });
+  const ingredientsList = result?.ingredients?.map((ing) => {
+    return <li>{ing}</li>;
+  });
 
-      const data = await response.json();
-      if (response.status !== 200) {
-        throw data.error || new Error(`Request failed with status ${response.status}`);
-      }
+  const iinstructionsList = result?.instruction?.map((ins) => {
+    return <li>{ins}</li>;
+  });
 
-      setResult(data.result);
-      setAnimalInput("");
-    } catch(error) {
-      // Consider implementing your own error handling logic here
-      console.error(error);
-      alert(error.message);
-    }
-  }
+  const resultContent = result && (
+    <>
+      <h3 className={styles.recipeTitle}>{result?.name}</h3>
+      <div className={styles.recipeBody}>
+        <ul className={styles.ingredientsList}>{ingredientsList}</ul>
+        <ul className={styles.instructionsList}>{iinstructionsList}</ul>
+      </div>
+    </>
+  );
+
+
+  const icon = "/dog.png";
+  const title = "What's to eat???";
 
   return (
     <div>
@@ -37,21 +40,16 @@ export default function Home() {
         <title>OpenAI Quickstart</title>
         <link rel="icon" href="/dog.png" />
       </Head>
+      <Header icon={icon} title={title}></Header>
+
 
       <main className={styles.main}>
-        <img src="/dog.png" className={styles.icon} />
-        <h3>Name my pet</h3>
-        <form onSubmit={onSubmit}>
-          <input
-            type="text"
-            name="animal"
-            placeholder="Enter an animal"
-            value={animalInput}
-            onChange={(e) => setAnimalInput(e.target.value)}
-          />
-          <input type="submit" value="Generate names" />
-        </form>
-        <div className={styles.result}>{result}</div>
+          <QForm
+          setResult={setResult}
+          setIsSpinnerDisplayed={setIsSpinnerDisplayed}
+        />
+        {isSpinnerDisplayed && <LoadingSpinner/>}
+        <WrapperCard children={resultContent}></WrapperCard>
       </main>
     </div>
   );

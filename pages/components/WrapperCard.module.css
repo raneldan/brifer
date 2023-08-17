@@ -1,0 +1,12 @@
+.wrapperCard {
+    border-radius: 8px;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    border: 5px solid burlywood;
+    background-color: rgba(227, 219, 214, 0.818);
+    width: 50%;
+    margin-left: 10%;
+    margin-right: 10%;  
+  }
+  
